@@ -25,7 +25,7 @@ The functions and algorithms are adapted from
 
 ``` julia
 using Pkg
-Pkg.add(url = "https://github.com/stakahama/KramersKronig.jl")
+Pkg.add(url="https://github.com/stakahama/KramersKronig.jl")
 ```
 
 ## Example usage
@@ -56,10 +56,11 @@ y3 = kkre_trapz(x, curve)
 
 ``` julia
 plot()
-plot!(x, curve, label = "Im")
-plot!(x, y1, label = "Re - McLaurin")
-plot!(x, y2, label = "Re - Rectangle")
-plot!(x, y3, label = "Re - Trapezium", linestyle=:dash)
+plot!(x, curve, label="Im")
+plot!(x, y1, label="Re - McLaurin")
+plot!(x, y2, label="Re - Rectangle")
+plot!(x, y3, label="Re - Trapezium", linestyle=:dash)
+plot!(size=(400, 250))
 ```
 
 ![](README_files/figure-commonmark/cell-5-output-1.svg)
