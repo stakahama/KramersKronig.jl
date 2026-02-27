@@ -1,0 +1,5 @@
+project:
+  render:
+    - README.qmd
+  post-render:
+    - ./postscript.sh

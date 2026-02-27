@@ -1,8 +1,7 @@
 # KramersKronig.jl
 
 
-[![Build
-Status](https://github.com/stakahama/KramersKronig.jl/actions/workflows/CI.yml/badge.svg?branch=main)](https://github.com/stakahama/KramersKronig.jl/actions/workflows/CI.yml?query=branch%3Amain)
+[![](https://github.com/stakahama/KramersKronig.jl/actions/workflows/CI.yml/badge.svg?branch=main)](https://github.com/stakahama/KramersKronig.jl/actions/workflows/CI.yml?query=branch%3Amain)
 
 This module provides functions for calculating the real part from the
 imaginary part of a spectrum (vector) and vice versa. The functions
@@ -51,7 +50,7 @@ Find complementary (real) part.
 ``` julia
 y1 = kkre(x, curve) # default: alg=McLaurin()
 y2 = kkre(x, curve; alg=Rectangle())
-y3 = kkre_trapz(x, curve)
+y3 = kkre(x, curve; alg=Trapezoid())
 ```
 
 ``` julia
@@ -59,11 +58,11 @@ plot()
 plot!(x, curve, label="Im")
 plot!(x, y1, label="Re - McLaurin")
 plot!(x, y2, label="Re - Rectangle")
-plot!(x, y3, label="Re - Trapezium", linestyle=:dash)
+plot!(x, y3, label="Re - Trapezoid", linestyle=:dash)
 plot!(size=(400, 250))
 ```
 
-![](README_files/figure-commonmark/cell-5-output-1.svg)
+![](README_files/figure-commonmark/cell-6-output-1.svg)
 
 ## Notes
 

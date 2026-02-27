@@ -25,7 +25,8 @@ Example usage (as local file in same directory as script):
 
 module KramersKronig
 
-export kkim, kkre, sskkim, sskkre, kkre_trapz, integrate, Maclaurin, Rectangle
+export kkim, kkre, sskkim, sskkre, kkre, integrate,
+    KKIntegrator, Maclaurin, Rectangle, Trapezoid
 
 ## -----------------------------------------------------------------------------
 
@@ -35,6 +36,7 @@ abstract type KKIntegrator end
 
 struct Maclaurin <: KKIntegrator end
 struct Rectangle <: KKIntegrator end
+struct Trapezoid <: KKIntegrator end
 
 ## -----------------------------------------------------------------------------
 
@@ -127,7 +129,7 @@ function kkim(ω::AbstractVector{<:Real}, Reχ::AbstractVector{<:Real}; alg::KKI
 end
 
 """
-    function kkre_trapz(ω::AbstractVector{<:Real}, Imχ::AbstractVector{<:Real})::Vector{<:Float64}
+    function kkre(ω::AbstractVector{<:Real}, Imχ::AbstractVector{<:Real}; alg::KKIntegrator=Trapezoid())::Vector{<:Float64}
 
 Calculate real part from imaginary part of a vector variable using Kramers-Kronig relations with trapezium integration.
 
@@ -139,7 +141,7 @@ Calculate real part from imaginary part of a vector variable using Kramers-Kroni
 ### Returns
 - `Vector{<:Float64}`: spectrum vector
 """
-function kkre_trapz(ω::AbstractVector{<:Real}, Imχ::AbstractVector{<:Real})::Vector{<:Float64}
+function kkre(ω::AbstractVector{<:Real}, Imχ::AbstractVector{<:Real}; alg::KKIntegrator=Trapezoid())::Vector{<:Float64}
     N = length(ω)
     dω = abs(only(diff(ω[1:2])))
     integrand(j, k) = ω[k] * Imχ[k] / (ω[k]^2 - ω[j]^2)    
@@ -171,7 +173,7 @@ end
 ## Singly-subtractive KK functions
 
 """
-    function sskkre(ω::AbstractVector{<:Real}, Imχ::AbstractVector{<:Real}, ω1::Real, Imχ1::Real; alg::KKIntegrator=Maclaurin())::Vector{<:Float64}
+    function sskkre(ω::AbstractVector{<:Real}, Imχ::AbstractVector{<:Real}, ω1::Real, Reχ1::Real; alg::KKIntegrator=Maclaurin())::Vector{<:Float64}
 
 Calculate real part from imaginary part of a vector variable using Kramers-Kronig relations using one anchor point.
 
@@ -179,13 +181,13 @@ Calculate real part from imaginary part of a vector variable using Kramers-Kroni
 - `ω::AbstractVector{<:Real}`: frequency or wavenumber
 - `Imχ::AbstractVector{<:Real}`: spectrum of imaginary part (real values)
 - `ω1::Real`: frequency or wavenumber at anchor point
-- `Imχ1::Real`: spectrum value at anchor point
+- `Reχ1::Real`: spectrum value at anchor point
 - `alg::KKIntegrator`: integration algorithm [either `Maclaurin()` (default) or `Rectangle()`]
 
 ### Returns
 - `Vector{<:Float64}`: spectrum vector
 """
-function sskkre(ω::AbstractVector{<:Real}, Imχ::AbstractVector{<:Real}, ω1::Real, Imχ1::Real; alg::KKIntegrator=Maclaurin())::Vector{<:Float64}
+function sskkre(ω::AbstractVector{<:Real}, Imχ::AbstractVector{<:Real}, ω1::Real, Reχ1::Real; alg::KKIntegrator=Maclaurin())::Vector{<:Float64}
     k = argmin((ω .- ω1).^2)
     Reχ = kkre(ω, Imχ; alg=alg)
     return Reχ .+ (Reχ1 .- Reχ[k])
@@ -200,13 +202,13 @@ Calculate imaginary part from real part of a vector variable using Kramers-Kroni
 - `ω::AbstractVector{<:Real}`: frequency or wavenumber
 - `Reχ::AbstractVector{<:Real}`: spectrum of real part
 - `ω1::Real`: frequency or wavenumber at anchor point
-- `Reχ1::Real`: spectrum value at anchor point
+- `Imχ1::Real`: spectrum value at anchor point
 - `alg::KKIntegrator`: integration algorithm [either `Maclaurin()` (default) or `Rectangle()`]
 
 ### Returns
 - `Vector{<:Float64}`: spectrum vector
 """
-function sskkim(ω::AbstractVector{<:Real}, Reχ::AbstractVector{<:Real}, ω1::Real, Reχ1::Real; alg::KKIntegrator=Maclaurin())::Vector{<:Float64}
+function sskkim(ω::AbstractVector{<:Real}, Reχ::AbstractVector{<:Real}, ω1::Real, Imχ1::Real; alg::KKIntegrator=Maclaurin())::Vector{<:Float64}
     k = argmin((ω .- ω1).^2)
     Imχ = kkim(ω, Reχ; alg=alg)
     return Imχ .+ ω1.^(-1) .* ω.* (Imχ1 .- Imχ[k])
